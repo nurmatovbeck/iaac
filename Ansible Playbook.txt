@@ -1,0 +1,4 @@
+- name: Install the IAAC rpm from a remote repo
+  yum:
+    name: https://github.com/nurmatovbeck/iaac.git
+    state: present
