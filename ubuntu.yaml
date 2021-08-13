@@ -1,0 +1,47 @@
+ADD file:d370c95489db85c7c58c7970cc48bc628ce77c17f20cb1e4528de52872dea8d4 in / 
+
+
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: role-pod-read
+  namespace: default
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "watch", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: service-account-rolebinding
+  namespace: default
+subjects:
+  - kind: ServiceAccount
+    name: service-account-pod-read
+roleRef:
+  kind: Role
+  name: role-pod-read
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: service-account-pod-read
+  namespace: default
+---
+# Installs ubuntu:20.04
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: service-account-pod
+  namespace: default
+spec:
+  containers:
+    - command: ["ADD file:d370c95489db85c7c58c7970cc48bc628ce77c17f20cb1e4528de52872dea8d4 in / "]
+      image: ubuntu
+      name: pods-simple-container
+  serviceAccount: service-account-pod-read
